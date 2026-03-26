@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- ORACLE VOICE BUTTON -->
+<button id="oracle-btn" onclick="startOracle()">🎤</button>
+<!-- APP HEADER -->
+<div class="app-header">
+  <div class="app-brand">
+    <div class="brand-icon">🗺️</div>
+    <div>
+      <div class="brand-name">Daarideepa</div>
+      <div class="brand-tagline">Smart Navigation · Gamified</div>
+    </div>
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-chip">
+      <span class="stat-icon">⭐</span>
+      <div class="stat-info">
+        <div class="stat-num points-val">0</div>
+        <div class="stat-lbl">Points</div>
+      </div>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-icon">🔥</span>
+      <div class="stat-info">
+        <div class="stat-num" id="streak-val">0</div>
+        <div class="stat-lbl">Day Streak</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-section">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="destination" type="text" placeholder="Where to?" autocomplete="off" onkeydown="if(event.key==='Enter')getRoute()">
+      </div>
+      <button id="find-btn" onclick="getRoute()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Find Smart Route
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="routes">
+      <span class="tab-icon">🧭</span>
+      Routes
+    </button>
+    <button class="tab-btn" data-tab="parking">
+      <span class="tab-icon">🅿️</span>
+      Parking
+    </button>
+    <button class="tab-btn" data-tab="rewards">
+      <span class="tab-icon">🎁</span>
+      Rewards
+    </button>
+    <button class="tab-btn" data-tab="rank">
+      <span class="tab-icon">🏆</span>
+      Rank
+    </button>
+  </div>
+</div>
+
+<!-- ROUTES PANEL -->
+<div id="panel-routes" class="tab-panel active">
+  <div style="height:16px"></div>
+
+  <div id="route-list-section">
+    <div class="section-title">Available Routes</div>
+    <div id="route-cards"></div>
+  </div>
+
+  <div class="empty-state" id="routes-empty">
+    <div class="empty-icon">🧭</div>
+    <p>Enter a destination above<br>to find smart routes</p>
+  </div>
+</div>
+
+<!-- PARKING PANEL -->
+<div id="panel-parking" class="tab-panel">
+  <div style="height:16px"></div>
+  <div class="section-title">Nearby Parking</div>
+  <div id="parking-cards">
+    <div class="empty-state">
+      <div class="empty-icon">🅿️</div>
+      <p>Search a route first<br>to see parking spots</p>
+    </div>
+  </div>
+</div>
+
+<!-- REWARDS PANEL -->
+<div id="panel-rewards" class="tab-panel">
+  <div style="height:16px"></div>
+
+  <!-- POINTS HERO -->
+  <div class="points-hero">
+    <div class="pts-big points-val">0</div>
+    <div class="pts-lbl">Daarideepa Points</div>
+    <div class="streak-row">
+      🔥 <span id="streak-val2">0</span>-day streak
+    </div>
+  </div>
+
+  <!-- BADGES -->
+  <div class="section-title">Your Badges</div>
+  <div id="badges-grid"></div>
+
+  <!-- COUPONS -->
+  <div class="section-title">Redeem Points</div>
+  <div class="coupon-grid">
+    <div class="coupon-card">
+      <div class="coupon-info">
+        <div class="coupon-name">☕ Café Coffee Day</div>
+        <div class="coupon-detail">₹50 off on any order</div>
+      </div>
+      <span class="coupon-cost">200 pts</span>
+      <button class="redeem-btn" onclick="redeemCoupon(200,'₹50 off at Café Coffee Day')">Redeem</button>
+    </div>
+    <div class="coupon-card">
+      <div class="coupon-info">
+        <div class="coupon-name">🅿️ Free Parking Hour</div>
+        <div class="coupon-detail">1 hour free at any partner spot</div>
+      </div>
+      <span class="coupon-cost">350 pts</span>
+      <button class="redeem-btn" onclick="redeemCoupon(350,'1 free parking hour')">Redeem</button>
+    </div>
+    <div class="coupon-card">
+      <div class="coupon-info">
+        <div class="coupon-name">⛽ Indian Oil</div>
+        <div class="coupon-detail">₹100 off on fuel refill</div>
+      </div>
+      <span class="coupon-cost">500 pts</span>
+      <button class="redeem-btn" onclick="redeemCoupon(500,'₹100 off on fuel')">Redeem</button>
+    </div>
+    <div class="coupon-card">
+      <div class="coupon-info">
+        <div class="coupon-name">🛒 Zepto</div>
+        <div class="coupon-detail">₹150 off on grocery delivery</div>
+      </div>
+      <span class="coupon-cost">750 pts</span>
+      <button class="redeem-btn" onclick="redeemCoupon(750,'₹150 off on Zepto')">Redeem</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD PANEL -->
+<div id="panel-rank" class="tab-panel">
+  <div style="height:16px"></div>
+  <div class="section-title">City Leaderboard</div>
+  <table class="leaderboard-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Driver</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard-body"></tbody>
+  </table>
+
+  <div style="height:20px"></div>
+  <div class="section-title">How to Earn Points</div>
+  <div style="padding:4px 0 20px;font-size:13px;color:var(--text3);line-height:2">
+    🟢 <b style="color:var(--text)">Eco Route</b> — +120 pts<br>
+    🟡 <b style="color:var(--text)">Moderate Route</b> — +60 pts<br>
+    ⚡ <b style="color:var(--text)">AI Dijkstra Reroute</b> — +150 pts<br>
+    🛕 <b style="color:var(--text)">Festival Crowd-Avoid</b> — +150 pts<br>
+    🅿️ <b style="color:var(--text)">Smart Parking Check-in</b> — +50–100 pts<br>
+    🏁 <b style="color:var(--text)">Arrive at Destination</b> — +50 pts<br>
+    🔥 <b style="color:var(--text)">Daily Streak</b> — bonus multiplier<br>
+    ⚠️ <b style="color:#EA4335">Road Parking Penalty</b> — −50 pts<br>
+    🏅 <b style="color:var(--text)">Unlock Badges</b> — earn milestones
+  </div>
+</div>
+
+<!-- IMPACT MODAL -->
+<div id="impact-modal">
+  <div class="impact-icon">🌿</div>
+  <div class="impact-title">You helped reduce congestion by</div>
+  <div id="impact-val">0%</div>
+  <div class="impact-sub" id="impact-route">Eco Route</div>
+  <div class="impact-pts-row points-val">+<span id="impact-pts">0</span></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='route.js') }}"></script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+<script>
+  // Sync second streak display
+  document.addEventListener('DOMContentLoaded', () => {
+    const s2 = document.getElementById('streak-val2');
+    if (s2) {
+      const observer = new MutationObserver(() => { if (s2) s2.textContent = document.getElementById('streak-val').textContent; });
+      observer.observe(document.getElementById('streak-val'), { childList: true, characterData: true, subtree: true });
+    }
+  });
+
+  // Accept buttons are now rendered directly in renderRouteCards()
+  // Two-phase parking navigation, AI traffic & Dijkstra rerouting active
+</script>
+{% endblock %}
