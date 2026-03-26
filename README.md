@@ -94,6 +94,7 @@ Daarideepa is a **smart, AI-driven system** that:
 
 ### ⚙️ Backend
 - Python / Node.js
+- SQLite (Database)
 
 ### 🤖 AI/ML
 - Crowd prediction model
